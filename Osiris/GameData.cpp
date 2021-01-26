@@ -30,7 +30,6 @@ static std::vector<EntityData> entityData;
 static std::vector<LootCrateData> lootCrateData;
 static std::forward_list<ProjectileData> projectileData;
 static BombData bombData;
-static std::vector<InfernoData> infernoData;
 
 static auto playerByHandleWritable(int handle) noexcept
 {
@@ -53,7 +52,6 @@ void GameData::update() noexcept
     weaponData.clear();
     entityData.clear();
     lootCrateData.clear();
-    infernoData.clear();
 
     localPlayerData.update();
     bombData.update();
@@ -133,10 +131,6 @@ void GameData::update() noexcept
                     break;
                 case ClassId::LootCrate:
                     lootCrateData.emplace_back(entity);
-                    break;
-                case ClassId::Inferno:
-                    infernoData.emplace_back(entity);
-                    break;
                 }
             }
         }
@@ -212,11 +206,6 @@ const std::forward_list<ProjectileData>& GameData::projectiles() noexcept
 const BombData& GameData::plantedC4() noexcept
 {
     return bombData;
-}
-
-const std::vector<InfernoData>& GameData::infernos() noexcept
-{
-    return infernoData;
 }
 
 void LocalPlayerData::update() noexcept
@@ -547,15 +536,4 @@ void BombData::update() noexcept
         }
     }
     blowTime = 0.0f;
-}
-
-InfernoData::InfernoData(Entity* inferno) noexcept
-{
-    const auto& origin = inferno->getAbsOrigin();
-
-    points.reserve(inferno->fireCount());
-    for (int i = 0; i < inferno->fireCount(); ++i) {
-        if (inferno->fireIsBurning()[i])
-            points.emplace_back(inferno->fireXDelta()[i] + origin.x, inferno->fireYDelta()[i] + origin.y, inferno->fireZDelta()[i] + origin.z);
-    }
 }
